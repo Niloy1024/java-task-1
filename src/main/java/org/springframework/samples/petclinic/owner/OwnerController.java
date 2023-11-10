@@ -18,6 +18,8 @@ package org.springframework.samples.petclinic.owner;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
@@ -26,7 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -50,6 +54,7 @@ class OwnerController {
 
 	private final OwnerRepository owners;
 	private final AuthenticationManager authenticationManager;
+	private final SecurityContextRepository securityContextRepository;
 
 	@InitBinder
 	public void setAllowedFields(WebDataBinder dataBinder) {
@@ -67,12 +72,15 @@ class OwnerController {
 		model.put("owner", owner);
 		return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 	}
-	@GetMapping("/login")
-	public String login(@RequestParam("username") String username,@RequestParam("password") String p){
+	@GetMapping("/logino")
+	public String login(@RequestParam("username") String username, @RequestParam("password") String p,
+						HttpServletRequest req, HttpServletResponse res){
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(username,p)
 		);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		securityContextRepository.saveContext(securityContext,req,res);
 
 		return  "welcome";
 	}
@@ -163,6 +171,10 @@ class OwnerController {
 		Owner owner = this.owners.findById(ownerId);
 		mav.addObject(owner);
 		return mav;
+	}
+	@GetMapping("/")
+	public String ss(){
+		return "welcome";
 	}
 
 }

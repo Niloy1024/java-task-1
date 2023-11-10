@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface OwnerRepository extends Repository<Owner, Integer> {
 
-	Owner findByfirstName(String s);
+	Owner  findByfirstName(String s);
 	@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
 	@Transactional(readOnly = true)
 	List<PetType> findPetTypes();

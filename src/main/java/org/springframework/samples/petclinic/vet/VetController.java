@@ -17,19 +17,25 @@ package org.springframework.samples.petclinic.vet;
 
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.samples.petclinic.config.Securityconfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Juergen Hoeller
@@ -37,21 +43,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Ken Krebs
  * @author Arjen Poutsma
  */
-@Controller
+@RestController
 @RequiredArgsConstructor
 class VetController {
 
 	private final VetRepository vetRepository;
-
 	private final AuthenticationManager authenticationManager;
+	private final SecurityContextRepository securityContextRepository;
 
-	@GetMapping("/login2")
-	public String login(@RequestParam("username") String username,@RequestParam("password") String p){
+//	@GetMapping("/")
+//	public String djjdj(){
+//		return "ss";
+//	}
+
+	@GetMapping("/loginv")
+	public String login(@RequestParam("username") String username,
+						@RequestParam("password") String p
+						, HttpServletRequest req, HttpServletResponse res
+
+						){
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(username,p)
 		);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		securityContextRepository.saveContext(securityContext,req,res);
 		return  "welcome";
 	}
 

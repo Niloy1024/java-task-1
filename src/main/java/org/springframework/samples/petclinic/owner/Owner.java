@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.catalina.User;
 import org.springframework.core.style.ToStringCreator;
@@ -52,7 +53,7 @@ import jakarta.validation.constraints.NotBlank;
 @Table(name = "owners")
 @Getter
 @Setter
-
+@RequiredArgsConstructor
 public class Owner extends Person implements UserDetails {
 
 	@Column(name = "address")
